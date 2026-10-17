@@ -53,3 +53,8 @@ You now see 17 cases.
 ## Exercise
 
 Add two cases that you expect the baseline to get wrong, and check that it does.
+
+### More to try
+
+- Add a case in another language, such as Spanish or Hindi. Does the baseline cope?
+- Add a message that mentions two problems, a bug and a refund. Decide the expected category and write down why.

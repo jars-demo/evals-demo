@@ -55,3 +55,8 @@ Run the tests for the harness itself: `uv run pytest`. Every test passes.
 
 Add a grader `billing_never_missed` that scores 0 when a billing message is put in any other
 category. Register it in `GRADERS` and see how the baseline does.
+
+### More to try
+
+- Write a grader that gives 0.5 when the urgency is one step off (`low` instead of `normal`) and 1 when exact.
+- Remove a grader from `GRADERS`, run again, and notice how the overall score can hide a weak spot.

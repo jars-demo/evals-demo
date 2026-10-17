@@ -71,3 +71,8 @@ acceptable, instead of never knowing it happened.
 
 Improve the offline `RulesModel` so it answers `low` for questions and praise. Compare the
 baseline before and after your change.
+
+### More to try
+
+- Make a prompt change that you expect to hurt, compare, and confirm the eval catches it.
+- Run the same model twice with no changes and compare. Any case that moves shows you how noisy the model is.

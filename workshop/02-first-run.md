@@ -57,3 +57,8 @@ You see 16 case lines and an overall score of 67%.
 
 Find the case where the baseline missed a high-urgency message (`urgent_never_missed` is below
 100%). Why did the keywords miss it?
+
+### More to try
+
+- Run `uv run python -m triage run --save runs/baseline.json` and open the file. Find one failed case in it.
+- Count how many cases the baseline answers `normal`. Why is that a problem for the urgency score?

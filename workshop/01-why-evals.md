@@ -46,3 +46,8 @@ get wrong.
 
 Name one AI feature you have shipped or used that you would not trust without an eval. What would
 its first five cases be?
+
+### More to try
+
+- List three ways the triage feature could fail that would cost a real company money.
+- Write down what score you would need before letting this feature route tickets on its own.

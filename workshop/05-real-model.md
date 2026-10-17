@@ -45,6 +45,29 @@ On Windows PowerShell use `$env:LLM_BASE_URL = "..."` instead of `export`.
 uv run python -m triage run --model llm
 ```
 
+## Or bring your provider, in the browser
+
+Prefer not to touch environment variables? Start the local page:
+
+```bash
+uv run python -m triage serve
+```
+
+Open <http://localhost:8765>, pick a provider (Groq, OpenAI, Ollama or any OpenAI-compatible
+URL), paste a key, press **Check provider** to prove the URL, key and model work, then **Run
+eval** for the full scorecard.
+
+It is built for keys: from `evals/triage/web.py`, the server listens on `127.0.0.1` only, refuses
+requests from other hosts or web pages, uses the key for that one request and logs nothing:
+
+```python
+def log_message(self, format: str, *args: object) -> None:
+    """Stay quiet: requests can carry an API key, so nothing about them is logged."""
+```
+
+Errors come back in plain words, such as `HTTP 401: the API key was rejected` or
+`HTTP 404: the base URL or the model name is wrong`.
+
 ## The prompt is part of the feature
 
 From `evals/triage/feature.py`:
@@ -65,3 +88,8 @@ The scorecard shows your model's name in the last line, and most cases pass.
 ## Exercise
 
 Run two different models from the same provider. Which one never misses an urgent case?
+
+### More to try
+
+- Use the Bring your provider page to compare two providers on the same cases. Which is faster, and which never misses an urgent case?
+- Point the page at a wrong model name on purpose and read the error. Then try a wrong key.

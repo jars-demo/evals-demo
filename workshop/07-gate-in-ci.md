@@ -58,3 +58,8 @@ minimum of 99%.` and `echo $?` prints `1`.
 
 You made it. Pick one AI feature of your own, write ten cases and one grader, and run it twice:
 once before and once after a prompt change.
+
+### More to try
+
+- Add a second gate in your CI that fails when `urgent_never_missed` is below 100%. Hint: read the saved JSON.
+- Fork the repository and make the Evals workflow go red with a bad change, then green again.
