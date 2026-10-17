@@ -1,0 +1,16 @@
+{"id": "double-charge", "message": "I was charged twice for my subscription this month. Please refund one.", "expected": {"category": "billing", "urgency": "normal"}}
+{"id": "invoice-copy", "message": "Can you send me a copy of last month's invoice for my accountant?", "expected": {"category": "billing", "urgency": "low"}}
+{"id": "card-declined-blocked", "message": "My card keeps getting declined and now my whole team is locked out of the workspace.", "expected": {"category": "billing", "urgency": "high"}}
+{"id": "price-question", "message": "What would the price be for 40 seats on the yearly plan?", "expected": {"category": "billing", "urgency": "low"}}
+{"id": "export-crash", "message": "The app crashes every time I export a report to PDF.", "expected": {"category": "bug", "urgency": "normal"}}
+{"id": "data-gone", "message": "After the update half of my projects are gone. We lost a week of work.", "expected": {"category": "bug", "urgency": "high"}}
+{"id": "typo-in-ui", "message": "Small thing: the settings page says 'Notifcations'.", "expected": {"category": "bug", "urgency": "low"}}
+{"id": "api-500", "message": "Your API returns 500 for every request since 9am. Production is down.", "expected": {"category": "bug", "urgency": "high"}}
+{"id": "forgot-password", "message": "I forgot my password and the reset email never arrives. I can't get in at all.", "expected": {"category": "account", "urgency": "high"}}
+{"id": "change-email", "message": "How do I change the email address on my account?", "expected": {"category": "account", "urgency": "low"}}
+{"id": "lost-2fa-phone", "message": "I lost the phone with my 2FA app. How do I get back into my account?", "expected": {"category": "account", "urgency": "high"}}
+{"id": "dark-mode", "message": "Dark mode would be great, my eyes would thank you.", "expected": {"category": "feature_request", "urgency": "low"}}
+{"id": "slack-integration", "message": "Any plans for a Slack integration? We would use it every day.", "expected": {"category": "feature_request", "urgency": "low"}}
+{"id": "csv-import", "message": "Please let us import contacts from a CSV, typing them in one by one is painful.", "expected": {"category": "feature_request", "urgency": "low"}}
+{"id": "thanks", "message": "Just wanted to say the new dashboard is lovely. Thanks!", "expected": {"category": "other", "urgency": "low"}}
+{"id": "job-question", "message": "Are you hiring frontend engineers in Berlin?", "expected": {"category": "other", "urgency": "low"}}
