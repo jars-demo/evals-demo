@@ -39,7 +39,12 @@ the details.
 uv run python -m triage run --save runs/before.json   # save a run
 uv run python -m triage compare runs/before.json runs/after.json
 uv run python -m triage run --min-score 0.8           # exit 1 below 80%, for CI
+uv run python -m triage serve                         # bring your provider, in the browser
 ```
+
+`serve` opens a local page on <http://localhost:8765> where you pick a provider, check that the
+URL, key and model work, and run the eval, without editing code. It listens on `127.0.0.1` only
+and never stores or logs the key.
 
 ## Chapters
 

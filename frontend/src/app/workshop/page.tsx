@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 import { CHAPTERS } from '@/lib/workshop'
 
-export const metadata: Metadata = { title: 'Chapters' }
+export const metadata: Metadata = { title: 'Workshop' }
 
 export default function WorkshopPage() {
   const minutes = CHAPTERS.reduce((sum, chapter) => sum + chapter.minutes, 0)

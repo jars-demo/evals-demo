@@ -29,7 +29,7 @@ export default async function ChapterPage(props: PageProps<'/workshop/[slug]'>) 
     <article className="mx-auto max-w-3xl px-4 pt-12 pb-24">
       <nav aria-label="Breadcrumb" className="mb-8 font-mono text-[12px] text-muted">
         <Link href="/workshop" className="hover:text-ink">
-          Chapters
+          Workshop
         </Link>{' '}
         / {chapter.number}
       </nav>

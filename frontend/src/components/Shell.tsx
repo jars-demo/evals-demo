@@ -36,7 +36,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <ul className="flex items-center gap-5 text-[14px] text-ink-2">
             <li>
               <Link href="/workshop" className="hover:text-ink">
-                Chapters
+                Workshop
               </Link>
             </li>
             <li>
@@ -54,7 +54,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <div className="mx-auto flex max-w-5xl flex-col gap-2 px-4 py-6 text-[13px] text-muted sm:flex-row sm:justify-between">
           <span>Evals, not vibes · MIT licensed</span>
           <a href={REPO_URL} className="hover:text-ink">
-            github.com/jars-demo/evals-demo
+            GitHub
           </a>
         </div>
       </footer>

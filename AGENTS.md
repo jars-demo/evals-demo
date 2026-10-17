@@ -15,7 +15,9 @@ evals/triage/feature.py   PROMPT, parse() and triage(): the feature under test
 evals/triage/models.py    RulesModel (offline baseline) and LLMModel (OpenAI-compatible, stdlib)
 evals/triage/graders.py   graders, each (answer, expected) -> 0..1, registered in GRADERS
 evals/triage/run.py       load_cases, run_eval, save/load, compare
-evals/triage/__main__.py  CLI: run [--model] [--save] [--min-score], compare
+evals/triage/__main__.py  CLI: run [--model] [--save] [--min-score], compare, serve
+evals/triage/web.py       serve: local-only provider page (127.0.0.1, Host and Origin checks,
+                          no logging); the page itself is web.html
 evals/data/cases.jsonl    the dataset, one case per line
 workshop/NN-slug.md       chapters; code quoted from evals/ must match it exactly
 frontend/                 Next.js site; reads ../workshop at build time

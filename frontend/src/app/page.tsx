@@ -54,6 +54,7 @@ export default function Home() {
             <li>No dependencies: Python standard library only.</li>
             <li>No API key needed to start: an offline baseline runs right away.</li>
             <li>Any OpenAI-compatible model when you are ready: Groq, OpenAI or Ollama.</li>
+            <li>A local Bring your provider page: check a provider and run the eval, no code.</li>
           </ul>
           <div className="flex flex-wrap gap-3 pt-2">
             <Link
