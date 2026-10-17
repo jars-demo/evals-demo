@@ -4,6 +4,7 @@ uv run python -m triage run                       # offline baseline
 uv run python -m triage run --model llm           # a real model, from LLM_* variables
 uv run python -m triage run --save runs/a.json --min-score 0.8
 uv run python -m triage compare runs/a.json runs/b.json
+uv run python -m triage serve                     # bring your provider, in the browser
 """
 
 import argparse
@@ -40,7 +41,15 @@ def main(argv: list[str] | None = None) -> int:
     diff = commands.add_parser("compare", help="show cases that got better or worse")
     diff.add_argument("before", type=Path)
     diff.add_argument("after", type=Path)
+    web = commands.add_parser("serve", help="a local page to check a provider and run the eval")
+    web.add_argument("--port", type=int, default=8765)
     args = parser.parse_args(argv)
+
+    if args.command == "serve":
+        from triage.web import serve
+
+        serve(args.port)
+        return 0
 
     if args.command == "compare":
         before, after = load(args.before), load(args.after)

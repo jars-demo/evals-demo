@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bring your provider · Evals, not vibes</title>
+<style>
+  :root { --ink: #111; --ink-2: #3a3a38; --muted: #6b6b66; --line: #e7e7e3; --surface: #fafaf9;
+          --pass: #166534; --fail: #b91c1c; --wash: #f0f7f1; }
+  * { box-sizing: border-box; }
+  body { margin: 0; color: var(--ink); background: #fff;
+         font: 15px/1.6 "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif; }
+  main { max-width: 52rem; margin: 0 auto; padding: 2.5rem 1rem 4rem; }
+  h1 { font-size: 1.9rem; letter-spacing: -0.02em; margin: 0 0 .25rem; }
+  p.lead { color: var(--ink-2); margin: 0 0 1.75rem; }
+  form { display: grid; gap: .9rem; padding: 1.25rem; border: 1px solid var(--line); border-radius: 8px; }
+  label { display: grid; gap: .3rem; font-size: 13px; font-weight: 600; }
+  input, select { font: inherit; padding: .55rem .7rem; border: 1px solid #d4d4cf; border-radius: 6px; background: #fff; }
+  .row { display: grid; gap: .9rem; grid-template-columns: 1fr 1fr; }
+  .hint { font-weight: 400; color: var(--muted); }
+  .buttons { display: flex; flex-wrap: wrap; gap: .6rem; }
+  button { font: inherit; font-weight: 600; padding: .6rem 1rem; border-radius: 6px; cursor: pointer;
+           border: 1px solid var(--ink); background: var(--ink); color: #fff; }
+  button.secondary { background: #fff; color: var(--ink); border-color: #d4d4cf; }
+  button:disabled { opacity: .5; cursor: progress; }
+  #status { min-height: 1.6rem; margin: 1rem 0; font-size: 14px; }
+  .ok { color: var(--pass); } .bad { color: var(--fail); }
+  table { width: 100%; border-collapse: collapse; font: 13px/1.5 "IBM Plex Mono", ui-monospace, monospace; }
+  td, th { padding: .4rem .5rem; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { font-family: "IBM Plex Sans", system-ui, sans-serif; }
+  .scores { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: .5rem; margin: 1rem 0; }
+  .score { padding: .75rem; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+  .score b { display: block; font-size: 1.4rem; }
+  .score.overall { background: var(--wash); border-color: #cfe3d4; }
+  @media (max-width: 560px) { .row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Bring your provider</h1>
+  <p class="lead">Check any OpenAI-compatible provider, then run the eval against it. Your key is
+    sent only to this local server for one request, and never saved.</p>
+
+  <form id="form" autocomplete="off">
+    <label>Provider
+      <select id="provider">
+        <option value="groq">Groq</option>
+        <option value="openai">OpenAI</option>
+        <option value="ollama">Ollama (local, no key)</option>
+        <option value="custom">Custom OpenAI-compatible</option>
+        <option value="baseline">Offline baseline (no model)</option>
+      </select>
+    </label>
+    <div class="row">
+      <label>Base URL <input id="base_url" placeholder="https://..." spellcheck="false"></label>
+      <label>Model <input id="model" placeholder="model name" spellcheck="false"></label>
+    </div>
+    <label>API key <span class="hint">not needed for Ollama or the baseline</span>
+      <input id="api_key" type="password" spellcheck="false">
+    </label>
+    <div class="buttons">
+      <button type="button" class="secondary" id="check">Check provider</button>
+      <button type="submit" id="run">Run eval</button>
+    </div>
+  </form>
+
+  <div id="status" role="status" aria-live="polite"></div>
+  <div id="result"></div>
+</main>
+<script>
+  const PRESETS = {
+    groq: { base_url: 'https://api.groq.com/openai/v1', model: 'openai/gpt-oss-120b' },
+    openai: { base_url: 'https://api.openai.com/v1', model: '' },
+    ollama: { base_url: 'http://localhost:11434/v1', model: 'llama3.2' },
+    custom: { base_url: '', model: '' },
+    baseline: { base_url: '', model: '' },
+  }
+  const $ = (id) => document.getElementById(id)
+  const fields = ['base_url', 'model', 'api_key']
+
+  function applyPreset() {
+    const preset = PRESETS[$('provider').value]
+    $('base_url').value = preset.base_url
+    $('model').value = preset.model
+    const baseline = $('provider').value === 'baseline'
+    for (const id of fields) $(id).disabled = baseline
+    $('check').disabled = baseline
+  }
+
+  function payload() {
+    return { provider: $('provider').value, base_url: $('base_url').value,
+             model: $('model').value, api_key: $('api_key').value }
+  }
+
+  function say(text, ok) {
+    $('status').textContent = text
+    $('status').className = ok === undefined ? '' : ok ? 'ok' : 'bad'
+  }
+
+  async function post(path) {
+    const response = await fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+                                         body: JSON.stringify(payload()) })
+    const data = await response.json()
+    if (!response.ok) throw new Error(data.error || 'request failed')
+    return data
+  }
+
+  function busy(on) { $('check').disabled = on || $('provider').value === 'baseline'; $('run').disabled = on }
+
+  const pct = (x) => Math.round(x * 100) + '%'
+  // Model replies can contain anything, including HTML, so every value is escaped before display.
+  const esc = (text) => String(text).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c])
+
+  function render(report) {
+    const cards = Object.entries(report.scores)
+      .map(([name, value]) => `<div class="score"><span>${esc(name)}</span><b>${pct(value)}</b></div>`).join('')
+    const rows = report.results.map((r) => {
+      const pass = Object.values(r.scores).every((v) => v === 1)
+      const answer = r.error ? r.error : `${r.answer.category}, ${r.answer.urgency}`
+      return `<tr><td class="${pass ? 'ok' : 'bad'}">${pass ? 'PASS' : 'FAIL'}</td><td>${esc(r.id)}</td><td>${esc(answer)}</td></tr>`
+    }).join('')
+    $('result').innerHTML =
+      `<div class="scores">${cards}<div class="score overall"><span>overall</span><b>${pct(report.overall)}</b></div></div>` +
+      `<table><thead><tr><th>Result</th><th>Case</th><th>Answer</th></tr></thead><tbody>${rows}</tbody></table>`
+  }
+
+  $('provider').addEventListener('change', applyPreset)
+
+  $('check').addEventListener('click', async () => {
+    busy(true); say('Checking...')
+    try {
+      const r = await post('/api/check')
+      say(`Connected to ${r.model} in ${r.ms} ms. It replied: "${r.reply}"`, true)
+    } catch (error) { say(`Check failed: ${error.message}`, false) }
+    busy(false)
+  })
+
+  $('form').addEventListener('submit', async (event) => {
+    event.preventDefault()
+    busy(true); say('Running 16 cases. This can take a little while...'); $('result').innerHTML = ''
+    try {
+      const report = await post('/api/run')
+      say(`Done: ${report.model} scored ${pct(report.overall)} overall.`, true)
+      render(report)
+    } catch (error) { say(`Run failed: ${error.message}`, false) }
+    busy(false)
+  })
+
+  applyPreset()
+</script>
+</body>
+</html>
